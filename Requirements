@@ -1,0 +1,13 @@
+### Hardware
+- Arduino
+- Temperature and humidity sensor
+- Light sensor
+- Camera module
+- OLED/LCD display
+- Breadboard, jumper wires, and power source
+
+### Software & Accounts
+- Arduino IDE 
+- TensorFlow Lite 
+- Python 
+- USB driver for the Arduino board
