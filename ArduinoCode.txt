@@ -1,0 +1,54 @@
+#include <LiquidCrystal.h>
+
+// Soil sensor pin
+const int soilMoisturePin = A0;
+
+// LCD pins: RS, E, D4, D5, D6, D7
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  // Start serial communication
+  Serial.begin(9600);
+
+  // Initialize LCD
+  lcd.begin(16, 2);
+  lcd.print("Soil Monitor");
+  lcd.setCursor(0, 1);
+  lcd.print("Starting...");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  // Read analog value from soil sensor
+  int sensorValue = analogRead(soilMoisturePin);
+
+  // Map to 0-100%
+  int moisturePercent = map(sensorValue, 1023, 0, 0, 100);
+
+  // Send moisture value to Python via Serial
+  Serial.println(moisturePercent);
+
+  // Determine condition (default thresholds)
+  String condition;
+  if (moisturePercent < 30) {
+    condition = "Too Dry";
+  } else if (moisturePercent <= 60) {
+    condition = "Ideal";
+  } else {
+    condition = "Too Wet";
+  }
+
+  // Display on LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Moisture:");
+  lcd.print(moisturePercent);
+  lcd.print("%");
+
+  lcd.setCursor(0, 1);
+  lcd.print(condition);
+
+  // Wait before next reading
+  delay(3000);
+}
