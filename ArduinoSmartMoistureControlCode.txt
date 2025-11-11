@@ -1,0 +1,55 @@
+import serial
+import time
+
+try:
+    arduino = serial.Serial(port='COM3', baudrate=9600, timeout=5)
+    time.sleep(2)  # Give the connection time to initialize
+    print("Connected to Arduino on COM3\n")
+except serial.SerialException:
+    print(" Could not connect to Arduino. Check the COM port and try again.")
+    exit()
+
+flowers = {
+    1: {"name": "Rose", "good_min": 30, "good_max": 50},
+    2: {"name": "Tulip", "good_min": 40, "good_max": 70},
+    3: {"name": "Sunflower", "good_min": 25, "good_max": 60}
+}
+
+print("Choose a flower to monitor:")
+for key, flower in flowers.items():
+    print(f"{key}. {flower['name']} (Ideal: {flower['good_min']}–{flower['good_max']}%)")
+
+try:
+    choice = int(input("Enter the number of your flower: "))
+    selected = flowers.get(choice)
+    if not selected:
+        raise ValueError
+except ValueError:
+    print("Invalid selection. Exiting...")
+    exit()
+
+print(f"\nMonitoring {selected['name']}...")
+print("------------------------------------------")
+
+try:
+    while True:
+        if arduino.in_waiting > 0:
+            raw_data = arduino.readline().decode('utf-8', errors='ignore').strip()
+            if raw_data.isdigit():
+                moisture = int(raw_data)
+                print(f"Soil Moisture: {moisture}%")
+
+                if moisture < selected["good_min"]:
+                    print(" Condition: Too Dry — needs watering!")
+                elif selected["good_min"] <= moisture <= selected["good_max"]:
+                    print(" Condition: Ideal — perfect moisture level.")
+                else:
+                    print(" Condition: Too Wet — stop watering!")
+
+                print("------------------------------------------")
+
+        time.sleep(1.5)
+
+except KeyboardInterrupt:
+    print("\nExiting monitoring...")
+    arduino.close()
