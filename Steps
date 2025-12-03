@@ -1,0 +1,20 @@
+STEP 1
+-Open Arduino IDE 
+
+STEP 2
+-Copy the Arduino code from the text file and paste it into the Arduino IDE
+
+STEP 3
+-Hit upload when the full Arduino kit is set up and connected. Make sure there are no errors when running it. If there is, unplug and replug the USB back in and try again
+
+STEP 4
+-Open Visual Studios and open a new Python file
+
+STEP 5
+-Copy or open the Python code you downloaded from ArduinoSmartMoistureControlCode.txt
+
+STEP 6
+-ONLY after you upload the Arduino code FIRST, can you run the Python script
+
+STEP 7
+-After that, everything should be running and working, and you should now see the moisture level on the LCD and the AI tips in the console.
