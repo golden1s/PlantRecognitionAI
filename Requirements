@@ -1,13 +1,19 @@
 ### Hardware
 - Arduino
-- Temperature and humidity sensor
-- Light sensor
-- Camera module
 - OLED/LCD display
 - Breadboard, jumper wires, and power source
+- DHT11 sensor
+- 16 Male to Male Wires
+- 3 Male To Female Wires
+- Breadboard 
+- Resistor 
+- Plant with soil 
+- Contrastor
 
 ### Software & Accounts
 - Arduino IDE 
 - TensorFlow Lite 
 - Python 
 - USB driver for the Arduino board
+- DHT Sensor Library
+- LiquidCrystal Library
