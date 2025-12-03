@@ -6,4 +6,5 @@ An Arduino-powered AI system that identifies plant species using sensors and cam
 The YouTube links below are videos that demonstrate how to make and use the soil moisture Arduino build
 
 https://youtu.be/Iqbek2BxFok?si=43puFr40nXbMyXyC 
+
 https://youtu.be/ey5nM372osg?si=up3yiDiLFLhzegEy
