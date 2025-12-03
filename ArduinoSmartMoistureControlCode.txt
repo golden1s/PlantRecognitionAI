@@ -1,13 +1,53 @@
 import serial
 import time
+from gpt4all import GPT4All
+
+
+
+
+model_name = "orca-mini-3b-gguf2-q4_0.gguf"
+ai = GPT4All(model_name)
+
+
+def ai_tip(plant_name, moisture):
+    prompt = f"""
+You are a plant-care assistant.
+
+
+Plant: {plant_name}
+Soil Moisture: {moisture}%
+
+
+Give 2 short, practical tips based ONLY on the current moisture level.
+"""
+    # stops freezing
+    response = ai.generate(
+        prompt,
+        max_tokens=80,
+        temp=0.4,
+        top_k=40,
+        top_p=0.9,
+        streaming=False
+    )
+    return response.strip()
+
+
+
+
+
 
 try:
     arduino = serial.Serial(port='COM3', baudrate=9600, timeout=5)
-    time.sleep(2)  # Give the connection time to initialize
+    time.sleep(2)
     print("Connected to Arduino on COM3\n")
 except serial.SerialException:
-    print(" Could not connect to Arduino. Check the COM port and try again.")
+    print("Could not connect to Arduino. Check the COM port and try again.")
     exit()
+
+
+
+
+
 
 flowers = {
     1: {"name": "Rose", "good_min": 30, "good_max": 50},
@@ -15,9 +55,11 @@ flowers = {
     3: {"name": "Sunflower", "good_min": 25, "good_max": 60}
 }
 
+
 print("Choose a flower to monitor:")
-for key, flower in flowers.items():
-    print(f"{key}. {flower['name']} (Ideal: {flower['good_min']}–{flower['good_max']}%)")
+for key, plant in flowers.items():
+    print(f"{key}. {plant['name']} (Ideal range: {plant['good_min']}–{plant['good_max']}%)")
+
 
 try:
     choice = int(input("Enter the number of your flower: "))
@@ -28,27 +70,49 @@ except ValueError:
     print("Invalid selection. Exiting...")
     exit()
 
+
 print(f"\nMonitoring {selected['name']}...")
 print("------------------------------------------")
+
+
+
+
+
 
 try:
     while True:
         if arduino.in_waiting > 0:
             raw_data = arduino.readline().decode('utf-8', errors='ignore').strip()
+
+
             if raw_data.isdigit():
                 moisture = int(raw_data)
                 print(f"Soil Moisture: {moisture}%")
 
+
+               
                 if moisture < selected["good_min"]:
-                    print(" Condition: Too Dry — needs watering!")
-                elif selected["good_min"] <= moisture <= selected["good_max"]:
-                    print(" Condition: Ideal — perfect moisture level.")
+                    print("Condition: Too Dry — needs water.")
+                elif moisture <= selected["good_max"]:
+                    print("Condition: Ideal soil moisture.")
                 else:
-                    print(" Condition: Too Wet — stop watering!")
+                    print("Condition: Too Wet — avoid watering.")
+
+
+               
+                print("\nAI Tips:")
+                try:
+                    tips = ai_tip(selected["name"], moisture)
+                    print(tips)
+                except Exception as e:
+                    print("Error generating AI tips:", e)
+
 
                 print("------------------------------------------")
 
-        time.sleep(1.5)
+
+        time.sleep(2)
+
 
 except KeyboardInterrupt:
     print("\nExiting monitoring...")
